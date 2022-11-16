@@ -4,13 +4,18 @@ import os
 from tqdm import tqdm
 from datetime import date
 
-DOWNLOAD_DIR = "data/{}".format
+parser = argparse.ArgumentParser(description="download TROPOMI data")
+parser.add_argument('product', type=str)
+
+args = parser.parse_args()
+
+DOWNLOAD_DIR = "../data/{}".format(args.product)
 
 producttype_dict = {"NO2": "L2__NO2___",
                     "O3": "L2__O3____",
                     "HCHO": "L2__HCHO__",}
 
-producttype = producttype_dict["HCHO"]
+producttype = producttype_dict[args.product]
 
 DHUS_USER = "s5pguest"
 DHUS_PASSWORD = "s5pguest"
@@ -20,7 +25,7 @@ api = SentinelAPI(DHUS_USER, DHUS_PASSWORD, DHUS_URL)
 
 date_range = ('20190101', '20220101')
 
-footprint = geojson_to_wkt(read_geojson('map (3).geojson'))
+footprint = geojson_to_wkt(read_geojson('geojson/LAbasin.geojson'))
 
 query_body = {
         "date": date_range,
@@ -41,4 +46,4 @@ tqdm.write(
         )
 )
 
-# api.download_all(products)
+api.download_all(products, directory_path=DOWNLOAD_DIR)
