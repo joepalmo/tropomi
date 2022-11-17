@@ -23,27 +23,32 @@ DHUS_URL = "https://s5phub.copernicus.eu/dhus/"
 
 api = SentinelAPI(DHUS_USER, DHUS_PASSWORD, DHUS_URL)
 
-date_range = ('20200314', '20200320')
+date_range = ('20200101', '20200314')
 
 footprint = geojson_to_wkt(read_geojson('geojson/LAbasin.geojson'))
 
-query_body = {
-        "date": date_range,
-        "platformname": "Sentinel-5 Precursor",
-        "producttype": producttype
-    }
+def query_api(product_type, footprint, date_range, download_dir):
+    query_body = {
+            "date": date_range,
+            "platformname": "Sentinel-5 Precursor",
+            "producttype": product_type
+        }
 
-products = api.query(footprint, **query_body)
+    products = api.query(footprint, **query_body)
 
-# display results
-tqdm.write(
-    (
-        "Number of products found: {number_product}\n"
-        "Total products size: {size:.2f} GB\n"
-    ).format(
-        number_product=len(products),
-        size=api.get_products_size(products)
-        )
-)
+    # display results
+    tqdm.write(
+        (
+            "Number of products found: {number_product}\n"
+            "Total products size: {size:.2f} GB\n"
+        ).format(
+            number_product=len(products),
+            size=api.get_products_size(products)
+            )
+    )
 
-api.download_all(products, directory_path=DOWNLOAD_DIR)
+    api.download_all(products, directory_path=download_dir)
+
+query_api(producttype, footprint, date_range, DOWNLOAD_DIR)
+query_api(producttype_dict["HCHO"], footprint, date_range, "../data/{}".format("HCHO"))
+query_api(producttype_dict["O3"], footprint, date_range, "../data/{}".format("O3"))
