@@ -23,7 +23,7 @@ DHUS_URL = "https://s5phub.copernicus.eu/dhus/"
 
 api = SentinelAPI(DHUS_USER, DHUS_PASSWORD, DHUS_URL)
 
-date_range = ('20200101', '20200314')
+date_range = ('20200314', '20200701')
 
 footprint = geojson_to_wkt(read_geojson('geojson/LAbasin.geojson'))
 
